@@ -23,6 +23,7 @@ import { ReactComponent } from "*.svg";
 import SaveIcon from "@material-ui/icons/Save";
 import PopupWindow from "../PopupWindow";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AlarmIcon from "@material-ui/icons/Alarm";
 //tab and panel declaration staff
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -188,6 +189,10 @@ export default function TodoApp() {
     setShowForChange(false);
   }
 
+  //reset whole Application
+  function resetApp(){
+    setTodoLists([]);
+  }
   //return statement starts here
   return (
     <div className={classes.root}>
@@ -253,8 +258,18 @@ export default function TodoApp() {
                 </TabPanel>
               ))}
             </Grid>
-            <Grid container direction="column" item xs={2} spacing={10}>
-              <Grid item xs={5} spacing={3}>
+            <Grid container direction="column" item xs={2} spacing={0}>
+              <Grid>
+                <Button
+                  onClick={windowPopupForChangeList}
+                  variant="contained"
+                  color="primary"
+                  startIcon={<SaveIcon />}
+                >
+                  Change Name
+                </Button>
+              </Grid>
+              <Grid>
                 <Button
                   variant="contained"
                   color="secondary"
@@ -265,14 +280,15 @@ export default function TodoApp() {
                   Delete List
                 </Button>
               </Grid>
-              <Grid item xs={5} spacing={3}>
+              <Grid>
                 <Button
-                  onClick={windowPopupForChangeList}
-                  variant="contained"
-                  color="primary"
-                  startIcon={<SaveIcon />}
+                  className="reset-button"
+                  variant="outlined"
+                  color="secondary"
+                  startIcon={<AlarmIcon />}
+                  onClick={resetApp}
                 >
-                  Change Name
+                  Reset App
                 </Button>
               </Grid>
             </Grid>

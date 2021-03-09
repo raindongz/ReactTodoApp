@@ -1,7 +1,43 @@
 import { TodoItem } from "../interfaces/model";
 import { useState } from "react";
-import { Checkbox, Grid, IconButton } from "@material-ui/core";
+import {
+  Button,
+  Checkbox,
+  createMuiTheme,
+  createStyles,
+  Grid,
+  IconButton,
+  makeStyles, TextField,
+  Theme,
+  withStyles,
+} from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { green, purple } from "@material-ui/core/colors";
+
+//for style of color button
+const ColorButton = withStyles((theme: Theme) => ({
+  root: {
+    color: theme.palette.getContrastText(purple[500]),
+    backgroundColor: purple[500],
+    "&:hover": {
+      backgroundColor: purple[700],
+    },
+  },
+}))(Button);
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    margin: {
+      margin: theme.spacing(1),
+    },
+  })
+);
+
+const theme = createMuiTheme({
+  palette: {
+    primary: green,
+  },
+});
 
 interface TodoItemViewInterface {
   item: TodoItem;
@@ -16,7 +52,7 @@ interface TodoItemViewInterface {
 
 const TodoItemView = (props: TodoItemViewInterface) => {
   // const [item, setItem] = useState<TodoItem>( props.item )
-
+  const classes = useStyles();
   return (
     <Grid
       container
@@ -26,20 +62,8 @@ const TodoItemView = (props: TodoItemViewInterface) => {
       justify="center"
       alignItems="center"
     >
-      <Grid
-      >
-        <Checkbox
-          tabIndex={-1}
-          disableRipple
-          checked={props.item.completed}
-          onClick={() =>
-            props.handleTodoComplete(props.item.id, props.item.listId)
-          }
-        />
-      </Grid>
-      <Grid className="todo-item-input-wrapper"
-            >
-        <input
+      <Grid className="todo-item-input-wrapper">
+        <TextField id="standard-basic"
           style={{
             textDecoration: props.item.completed ? "line-through" : undefined,
           }}
@@ -49,8 +73,32 @@ const TodoItemView = (props: TodoItemViewInterface) => {
           }
         />
       </Grid>
-      <Grid
-         >
+      <Grid>
+        {props.item.completed ? (
+          <Button
+            variant="outlined"
+            color="primary"
+            className={classes.margin}
+            onClick={() =>
+              props.handleTodoComplete(props.item.id, props.item.listId)
+            }
+          >
+            Completed
+          </Button>
+        ) : (
+          <ColorButton
+            variant="contained"
+            color="primary"
+            className={classes.margin}
+            onClick={() =>
+                props.handleTodoComplete(props.item.id, props.item.listId)
+            }
+          >
+            Complete
+          </ColorButton>
+        )}
+      </Grid>
+      <Grid>
         <IconButton aria-label="delete" className="item-remove">
           <DeleteIcon
             fontSize="small"

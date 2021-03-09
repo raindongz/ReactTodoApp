@@ -56,3 +56,14 @@ body {
     outline: 0;
     border: 1px solid #3498db;
 }
+/*todo item style*/
+.todo-item-input-wrapper input {
+    padding: 0 14px;
+    width: 85%;
+    height: 30px;
+    transition: .25s border ease-in-out;
+}
+.todo-item-input-wrapper input:focus {
+    outline: 0;
+    border: 1px solid #3498db;
+}
