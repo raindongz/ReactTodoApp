@@ -20,10 +20,39 @@ body {
     transition: .25s border-bottom ease-in-out;
 }
 .modal {
-    background: rgba(0, 0, 0, 0.6);
+    background-color: #616464;
+    color: #4cf1f1;
     position: absolute;
-    width: 35%;
-    left: 13%;
+    width: 60%;
+    height: 20%;
+    left: 17%;
     top: 10%;
     padding: 20px;
+}
+
+
+/* Todo form styles */
+.todo-form input,
+
+.todo-form input {
+    padding: 0 14px;
+    width: 30%;
+    height: 48px;
+    transition: .25s border ease-in-out;
+}
+
+.todo-form input:focus {
+    outline: 0;
+    border: 1px solid #3498db;
+}
+/*popup window input*/
+.window-input input {
+    padding: 0 14px;
+    width: 30%;
+    height: 48px;
+    transition: .25s border ease-in-out;
+}
+.window-input input:focus {
+    outline: 0;
+    border: 1px solid #3498db;
 }

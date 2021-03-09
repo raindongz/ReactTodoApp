@@ -42,9 +42,10 @@ const PopupWindow = (props: WindowInterface) => {
 
   return (
     <div className="modal">
-      <Grid>
-        <Grid>Enter List Name:</Grid>
-        <Grid>
+      <Grid container  direction="column" justify="center"
+      >
+        <Grid >Enter List Name:</Grid>
+        <Grid className='window-input'>
           <input
             ref={inputRef}
             type="text"

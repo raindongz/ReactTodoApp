@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@material-ui/core";
+import {Button, Grid} from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import { TodoItem, TodoList } from "../interfaces/model";
 import shortid from "shortid";
@@ -36,21 +36,25 @@ const TodoFormView = (props: TodoformViewInterface) => {
   }
   return (
     <div className="todo-form">
-      <input
-        ref={inputRef}
-        type="text"
-        placeholder="Enter new todo"
-        onChange={(event) => handleInputChange(event)}
-      />
-      <Button
-        onClick={() => handleInputEnter()}
-        variant="outlined"
-        color="primary"
-        size="small"
-        type="submit"
-      >
-        Add Item
-      </Button>
+      <Grid container spacing={3}
+            justify="center"
+            >
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Enter new todo"
+          onChange={(event) => handleInputChange(event)}
+        />
+        <Button
+          onClick={() => handleInputEnter()}
+          variant="outlined"
+          color="primary"
+          size="small"
+          type="submit"
+        >
+          Add Item
+        </Button>
+      </Grid>
     </div>
   );
 };

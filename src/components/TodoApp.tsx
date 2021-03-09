@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Box,
@@ -23,7 +23,7 @@ import { ReactComponent } from "*.svg";
 import SaveIcon from "@material-ui/icons/Save";
 import PopupWindow from "../PopupWindow";
 import DeleteIcon from "@material-ui/icons/Delete";
-
+//tab and panel declaration staff
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+//Todo APP start here
 export default function TodoApp() {
   //handle popup window for Add new List
   const [showForAdd, setShowForAdd] = useState(false);
@@ -74,17 +75,20 @@ export default function TodoApp() {
   //get item in local storage
   const localItems = JSON.parse(localStorage.getItem("lists") || "{}");
   const [todoLists, setTodoLists] = useState<TodoList[]>([] || localItems);
+
   useEffect(() => {
     const localItems = JSON.parse(localStorage.getItem("lists") || "{}");
-    if(localItems) {
-      setTodoLists((localItems))
+    if (localItems) {
+      setTodoLists(localItems);
     }
-  }, [])
+  }, []);
   //store lists in localStorage
   useEffect(() => {
     localStorage.setItem("lists", JSON.stringify(todoLists));
-  },[todoLists]);
-  //Item CRUD
+  }, [todoLists]);
+
+  //Item CRUD starts here
+  //complete item
   function handleTodoComplete(itemId: string, listId: string) {
     const newLists = _.cloneDeep(todoLists);
     newLists
@@ -94,6 +98,7 @@ export default function TodoApp() {
       .items.find((item) => item.id === itemId)!.completed;
     setTodoLists(newLists);
   }
+  //update item
   function handleTodoUpdate(
     event: React.ChangeEvent<HTMLInputElement>,
     itemId: string,
@@ -107,7 +112,7 @@ export default function TodoApp() {
 
     setTodoLists(newLists);
   }
-
+  //remove item
   function handleTodoRemove(itemId: string, listId: string) {
     const newLists = _.cloneDeep(todoLists);
     newLists.find((list) => list.id === listId)!.items = newLists
@@ -116,7 +121,7 @@ export default function TodoApp() {
     //newList.items= list.items.filter((item)=>item.id!==id);
     setTodoLists(newLists);
   }
-
+  //create item
   function handleItemCreat(item: TodoItem, listId: string) {
     const newLists = _.cloneDeep(todoLists);
     if (item.content.trim() === "") {
@@ -125,14 +130,16 @@ export default function TodoApp() {
     newLists.find((list) => list.id === listId)!.items.push(item);
     setTodoLists(newLists);
   }
-  //List CRUD
 
+  //List CRUD start here
+  //selected is for current tab and panel, currentList Id is for select the list with clicking the tab
   const [selected, setSelected] = useState(0);
   const [currentListId, setCurrentListId] = useState("");
-
+  //switching selected tab
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setSelected(newValue);
   };
+  //select current list by clicking tab
   const handleSelect = (listId: string) => {
     setCurrentListId(listId);
   };
@@ -164,6 +171,7 @@ export default function TodoApp() {
   function windowPopupForChangeList() {
     setShowForChange(true);
   }
+  //add new list
   const addNewList = (todoList: TodoList) => {
     if (todoList.name.trim() === "") {
       return;
@@ -179,28 +187,30 @@ export default function TodoApp() {
     setShowForAdd(false);
     setShowForChange(false);
   }
+
+  //return statement starts here
   return (
     <div className={classes.root}>
       <React.Fragment>
         <CssBaseline />
         <Container fixed>
           {showForAdd ? (
-              <PopupWindow
-                  windowForAdd={true}
-                  handleClose={handleClose}
-                  addNewList={addNewList}
-                  changeListName={changeListName}
-              />
+            <PopupWindow
+              windowForAdd={true}
+              handleClose={handleClose}
+              addNewList={addNewList}
+              changeListName={changeListName}
+            />
           ) : null}
           {showForChange ? (
-              <PopupWindow
-                  windowForAdd={false}
-                  handleClose={handleClose}
-                  addNewList={addNewList}
-                  changeListName={changeListName}
-              />
+            <PopupWindow
+              windowForAdd={false}
+              handleClose={handleClose}
+              addNewList={addNewList}
+              changeListName={changeListName}
+            />
           ) : null}
-          <Grid container direction="row" spacing={9}>
+          <Grid container direction="row" spacing={9} justify="center">
             <Grid item xs={10}>
               <AppBar position="static" color="default">
                 <Tabs
@@ -243,7 +253,7 @@ export default function TodoApp() {
                 </TabPanel>
               ))}
             </Grid>
-            <Grid container direction="column" item xs={2} spacing={3}>
+            <Grid container direction="column" item xs={2} spacing={10}>
               <Grid item xs={5} spacing={3}>
                 <Button
                   variant="contained"
@@ -255,16 +265,14 @@ export default function TodoApp() {
                   Delete List
                 </Button>
               </Grid>
-              <Grid item xs={5} spacing={3} >
+              <Grid item xs={5} spacing={3}>
                 <Button
                   onClick={windowPopupForChangeList}
                   variant="contained"
                   color="primary"
-                  size="small"
                   startIcon={<SaveIcon />}
-                  type="submit"
                 >
-                  Change List Name
+                  Change Name
                 </Button>
               </Grid>
             </Grid>
