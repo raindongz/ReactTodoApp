@@ -1,42 +1,45 @@
-import {TodoItem, TodoList} from "../interfaces/model";
+import { TodoItem, TodoList } from "../interfaces/model";
 import TodoItemView from "./TodoItemView";
-import {Button, Checkbox, Grid} from "@material-ui/core";
-import {useState} from "react";
+import { Button, Checkbox, Grid } from "@material-ui/core";
+import React, { useState } from "react";
 import _ from "lodash";
+import SaveIcon from "@material-ui/icons/Save";
 
 interface TodoListViewInterface {
-    todoList: TodoList
-    listIndex: number
-    changeListName: ( index: number, newName: string ) => void
-    handleTodoUpdate: (event: React.ChangeEvent<HTMLInputElement>, id: string) => void;
-    handleTodoRemove:(id:string)=>void;
-    handleTodoComplete:(id:string)=>void;
+  todoList: TodoList;
+  listIndex: number;
+  changeListName: (newName: string, listId: string) => void;
+  handleTodoUpdate: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    itemId: string,
+    listId: string
+  ) => void;
+  handleTodoRemove: (itemId: string, listId: string) => void;
+  handleTodoComplete: (itemId: string, listId: string) => void;
 }
 
-const TodoListView = ( props: TodoListViewInterface ) => {
+const TodoListView = (props: TodoListViewInterface) => {
+  return (
+    <div>
+      <Grid
+      >
+        <Grid>
+          {props.todoList.items.map((item, index) => (
+            <div>
+              <div>
+                <TodoItemView
+                  item={item}
+                  handleTodoComplete={props.handleTodoComplete}
+                  handleTodoUpdate={props.handleTodoUpdate}
+                  handleTodoRemove={props.handleTodoRemove}
+                />
+              </div>
+            </div>
+          ))}
+        </Grid>
+      </Grid>
+    </div>
+  );
+};
 
-    return (
-        <div>
-            {props.todoList.items.map( ( item, index ) => (
-                <div>
-                    <div>
-                        <TodoItemView
-                            item={item}
-                            handleTodoComplete={props.handleTodoComplete}
-                            handleTodoUpdate={props.handleTodoUpdate}
-                            handleTodoRemove={props.handleTodoRemove}
-                        />
-                    </div>
-                </div>
-            ) )}
-
-            <Button onClick={() => {
-                props.changeListName( props.listIndex, `newName ${props.listIndex + 1}` )
-            }}>
-                Change Name
-            </Button>
-        </div>
-    )
-}
-
-export default TodoListView
+export default TodoListView;

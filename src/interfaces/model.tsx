@@ -1,7 +1,8 @@
 export interface TodoItem {
     id: string,
     content: string,
-    completed: boolean
+    completed: boolean,
+    listId:string,
 }
 
 export interface TodoList {

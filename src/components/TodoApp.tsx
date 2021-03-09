@@ -1,174 +1,276 @@
-import React, { useState } from "react";
-import { Box, Button, makeStyles, Tab, Tabs, Theme, Typography } from "@material-ui/core";
+import React, {useEffect, useState} from "react";
+import {
+  AppBar,
+  Box,
+  Button,
+  Grid,
+  makeStyles,
+  Tab,
+  Tabs,
+  Theme,
+  Typography,
+} from "@material-ui/core";
 import TodoListView from "./TodoListView";
-import { TodoList } from "../interfaces/model";
+import { TodoItem, TodoList } from "../interfaces/model";
 import * as _ from "lodash";
+//to install shortid 1:npm install. 2:npm install type 3:npm i --save-dev shortid@2.2.15
+import shortid from "shortid";
+import Todoform from "./Todoform";
+import { Close } from "@material-ui/icons";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import { ReactComponent } from "*.svg";
+import SaveIcon from "@material-ui/icons/Save";
+import PopupWindow from "../PopupWindow";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 interface TabPanelProps {
-    children?: React.ReactNode;
-    index: any;
-    value: any;
+  children?: React.ReactNode;
+  index: any;
+  value: any;
 }
 
-function TabPanel( props: TabPanelProps ) {
-    const { children, value, index, ...other } = props;
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
 
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`vertical-tabpanel-${index}`}
-            aria-labelledby={`vertical-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={3}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-auto-tabpanel-${index}`}
+      aria-labelledby={`scrollable-auto-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
 }
 
-function a11yProps( index: any ) {
-    return {
-        id: `vertical-tab-${index}`,
-        'aria-controls': `vertical-tabpanel-${index}`,
-    };
+function a11yProps(index: any) {
+  return {
+    id: `scrollable-auto-tab-${index}`,
+    "aria-controls": `scrollable-auto-tabpanel-${index}`,
+  };
 }
 
-const useStyles = makeStyles( ( theme: Theme ) => ({
-    root: {
-        flexGrow: 1,
-        backgroundColor: theme.palette.background.paper,
-        display: 'flex',
-        height: 224,
-    },
-    tabs: {
-        borderRight: `1px solid ${theme.palette.divider}`,
-    },
-}) );
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    flexGrow: 1,
+    width: "100%",
+    backgroundColor: theme.palette.background.paper,
+  },
+}));
 
 export default function TodoApp() {
-    const classes = useStyles();
-
-    function handleTodoComplete(id:string){
-        const newList=todoLists;
-        newList.items.find((item)=>item.id===id)!.completed= !todoLists[index].items.find((item)=>item.id===id)!.completed;
-        setList(newList);
+  //handle popup window for Add new List
+  const [showForAdd, setShowForAdd] = useState(false);
+  //handle popup window for list name change
+  const [showForChange, setShowForChange] = useState(false);
+  const classes = useStyles();
+  //get item in local storage
+  const localItems = JSON.parse(localStorage.getItem("lists") || "{}");
+  const [todoLists, setTodoLists] = useState<TodoList[]>([] || localItems);
+  useEffect(() => {
+    const localItems = JSON.parse(localStorage.getItem("lists") || "{}");
+    if(localItems) {
+      setTodoLists((localItems))
     }
-    function handleTodoUpdate(event: React.ChangeEvent<HTMLInputElement>, id: string){
-        const newList:TodoList= list;
-        newList.items.find((item)=>item.id===id)!.content=event.target.value;
-        setList(newList);
+  }, [])
+  //store lists in localStorage
+  useEffect(() => {
+    localStorage.setItem("lists", JSON.stringify(todoLists));
+  },[todoLists]);
+  //Item CRUD
+  function handleTodoComplete(itemId: string, listId: string) {
+    const newLists = _.cloneDeep(todoLists);
+    newLists
+      .find((list) => list.id === listId)!
+      .items.find((item) => item.id === itemId)!.completed = !todoLists
+      .find((list) => list.id === listId)!
+      .items.find((item) => item.id === itemId)!.completed;
+    setTodoLists(newLists);
+  }
+  function handleTodoUpdate(
+    event: React.ChangeEvent<HTMLInputElement>,
+    itemId: string,
+    listId: string
+  ) {
+    const newLists = _.cloneDeep(todoLists);
+    newLists
+      .find((list) => list.id === listId)!
+      .items.find((item) => item.id === itemId)!.content = event.target.value;
+    //newList.items.find((item)=>item.id===id)!.content=event.target.value;
+
+    setTodoLists(newLists);
+  }
+
+  function handleTodoRemove(itemId: string, listId: string) {
+    const newLists = _.cloneDeep(todoLists);
+    newLists.find((list) => list.id === listId)!.items = newLists
+      .find((list) => list.id === listId)!
+      .items.filter((item) => item.id !== itemId);
+    //newList.items= list.items.filter((item)=>item.id!==id);
+    setTodoLists(newLists);
+  }
+
+  function handleItemCreat(item: TodoItem, listId: string) {
+    const newLists = _.cloneDeep(todoLists);
+    if (item.content.trim() === "") {
+      return;
     }
+    newLists.find((list) => list.id === listId)!.items.push(item);
+    setTodoLists(newLists);
+  }
+  //List CRUD
 
-    function handleTodoRemove(id:string){
-        const newList:TodoList=list;
-        newList.items= list.items.filter((item)=>item.id!==id);
-        setList(newList);
+  const [selected, setSelected] = useState(0);
+  const [currentListId, setCurrentListId] = useState("");
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setSelected(newValue);
+  };
+  const handleSelect = (listId: string) => {
+    setCurrentListId(listId);
+  };
+
+  function changeListName(listName: string) {
+    if (listName.trim() === "") {
+      return;
     }
-    //
-    const [todoLists, setTodoLists] = useState<TodoList[]>( [{
-        id: "1",
-        name: "List 1",
-        items: [{
-            id: "1",
-            content: "item 1-1",
-            completed: false
-        },
-            {
-                id: "2",
-                content: "item 1-2",
-                completed: false
-            }
-            ,
-            {
-                id: "3",
-                content: "item 1-3",
-                completed: false
-            }]
-    }, {
-        id: "2",
-        name: "List 2",
-        items: [{
-            id: "1",
-            content: "item 2-1",
-            completed: false
-        },
-            {
-                id: "2",
-                content: "item 2-2",
-                completed: false
-            }
-            ,
-            {
-                id: "3",
-                content: "item 2-3",
-                completed: false
-            }]
-    }] );
-    const [selected, setSelected] = useState( 0 );
+    const newLists = _.cloneDeep(todoLists);
+    newLists.find((list) => list.id === currentListId)!.name = listName;
+    setTodoLists(newLists);
+    setShowForChange(false);
+  }
 
-    const handleChange = ( event: React.ChangeEvent<{}>, newValue: number ) => {
-        setSelected( newValue );
+  const deleteList = () => {
+    const copyLists = _.cloneDeep(todoLists);
+    const newLists = copyLists.filter((list) => list.id !== currentListId);
+    setTodoLists(newLists);
+    //set current tab
+
+    //copy.splice( -1, 1 )
+    //setTodoLists( copy )
+  };
+  //popup window stuff for add new list
+  function windowPopupForAddList() {
+    setShowForAdd(true);
+  }
+  //popup window for change listy name
+  function windowPopupForChangeList() {
+    setShowForChange(true);
+  }
+  const addNewList = (todoList: TodoList) => {
+    if (todoList.name.trim() === "") {
+      return;
     }
-
-    function changeListName( listIndex: number, newName: string ) {
-        const copy = _.cloneDeep( todoLists )
-        const list = copy[ listIndex ]
-        list.name = newName
-        setTodoLists( copy )
+    setTodoLists([...todoLists, todoList]);
+    setShowForAdd(false);
+    //if only one list left then
+    if (todoLists.length === 1) {
+      setCurrentListId(todoLists[0].id);
     }
+  };
+  function handleClose() {
+    setShowForAdd(false);
+    setShowForChange(false);
+  }
+  return (
+    <div className={classes.root}>
+      <React.Fragment>
+        <CssBaseline />
+        <Container fixed>
+          {showForAdd ? (
+              <PopupWindow
+                  windowForAdd={true}
+                  handleClose={handleClose}
+                  addNewList={addNewList}
+                  changeListName={changeListName}
+              />
+          ) : null}
+          {showForChange ? (
+              <PopupWindow
+                  windowForAdd={false}
+                  handleClose={handleClose}
+                  addNewList={addNewList}
+                  changeListName={changeListName}
+              />
+          ) : null}
+          <Grid container direction="row" spacing={9}>
+            <Grid item xs={10}>
+              <AppBar position="static" color="default">
+                <Tabs
+                  value={selected}
+                  onChange={handleChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  aria-label="scrollable auto tabs example"
+                >
+                  {todoLists.map((todoList, index) => (
+                    <Tab
+                      label={todoList.name}
+                      {...a11yProps(index)}
+                      onClick={() => handleSelect(todoList.id)}
+                    />
+                  ))}
+                  <Button variant="outlined" onClick={windowPopupForAddList}>
+                    {" "}
+                    +{" "}
+                  </Button>
+                </Tabs>
+              </AppBar>
 
-    const deleteList = () => {
-        const copy = _.cloneDeep( todoLists )
-        copy.splice( -1, 1 )
-        setTodoLists( copy )
-    }
-
-    const addNewList = () => {
-        const item = {
-            id: "3",
-            name: "List 3",
-            items: [{
-                id: "1",
-                content: "item 3-1",
-                completed: false
-            },
-                {
-                    id: "2",
-                    content: "item 3-2",
-                    completed: false
-                }
-                ,
-                {
-                    id: "3",
-                    content: "item 3-3",
-                    completed: false
-                }]
-        }
-        setTodoLists( [...todoLists, item] );
-    };
-
-    return (
-        <div className={classes.root}>
-            <Tabs orientation="vertical" variant="scrollable" value={selected} onChange={handleChange} className={classes.tabs}>
-                {todoLists.map( ( todoList ) => (
-                    <Tab label={todoList.name} {...a11yProps( 0 )}/>
-                ) )}
-                <Button variant="outlined" onClick={addNewList}> + </Button>
-            </Tabs>
-            {todoLists.map( ( todoList, index ) => (
+              {todoLists.map((todoList, index) => (
                 <TabPanel index={index} value={selected}>
-                    <TodoListView
-                        todoList={todoList}
-                        listIndex={index}
-                        changeListName={changeListName}/>
+                  <Todoform
+                    todoList={todoList}
+                    handleItemCreate={handleItemCreat}
+                  />
+                  <TodoListView
+                    todoList={todoList}
+                    listIndex={index}
+                    changeListName={changeListName}
+                    handleTodoComplete={handleTodoComplete}
+                    handleTodoUpdate={handleTodoUpdate}
+                    handleTodoRemove={handleTodoRemove}
+                  />
                 </TabPanel>
-            ) )}
-
-            <Button onClick={deleteList}> DELETE LIST</Button>
-        </div>
-    )
+              ))}
+            </Grid>
+            <Grid container direction="column" item xs={2} spacing={3}>
+              <Grid item xs={5} spacing={3}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className="delete-button"
+                  startIcon={<DeleteIcon />}
+                  onClick={deleteList}
+                >
+                  Delete List
+                </Button>
+              </Grid>
+              <Grid item xs={5} spacing={3} >
+                <Button
+                  onClick={windowPopupForChangeList}
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  startIcon={<SaveIcon />}
+                  type="submit"
+                >
+                  Change List Name
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Container>
+      </React.Fragment>
+    </div>
+  );
 }
