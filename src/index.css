@@ -20,13 +20,13 @@ body {
     transition: .25s border-bottom ease-in-out;
 }
 .modal {
-    background-color: #616464;
-    color: #4cf1f1;
+    background-color: #454444;
+    color: #090a0a;
     position: absolute;
     width: 60%;
     height: 20%;
-    left: 17%;
-    top: 10%;
+    left: 14%;
+    top: 35%;
     padding: 20px;
 }
 
@@ -48,13 +48,12 @@ body {
 /*popup window input*/
 .window-input input {
     padding: 0 14px;
-    width: 30%;
     height: 48px;
     transition: .25s border ease-in-out;
 }
 .window-input input:focus {
     outline: 0;
-    border: 1px solid #3498db;
+    border: 1px solid #0c0b0b;
 }
 /*todo item style*/
 .todo-item-input-wrapper input {

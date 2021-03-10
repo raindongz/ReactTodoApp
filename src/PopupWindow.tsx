@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Grid, Icon } from "@material-ui/core";
+import {Button, Grid, Icon, TextField} from "@material-ui/core";
 import shortid from "shortid";
 import { TodoList } from "./interfaces/model";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -42,19 +42,17 @@ const PopupWindow = (props: WindowInterface) => {
 
   return (
     <div className="modal">
-      <Grid container  direction="column" justify="center"
+      <Grid container justify="center"
+            alignItems="center" spacing={1}
       >
-        <Grid >Enter List Name:</Grid>
-        <Grid className='window-input'>
-          <input
+        <Grid className='window-input' >
+          <TextField id="standard-basic" label="Enter List Name: "
             ref={inputRef}
             type="text"
-            placeholder="Enter new todo"
-            onChange={(event) => handleListNameInput(event)}
+            onChange={(event:React.ChangeEvent<HTMLInputElement>) => handleListNameInput(event)}
           />
         </Grid>
-        <Grid>
-          <Grid>
+          <Grid item xs={1}>
             <Button
               variant="contained"
               color="default"
@@ -66,16 +64,17 @@ const PopupWindow = (props: WindowInterface) => {
               Submit
             </Button>
           </Grid>
-          <Grid>
+          <Grid item xs={1}>
             <Button
-              variant="outlined"
-              className="cancel-button"
+                variant="contained"
+                color="default"
+                size="small"
+                type="submit"
               onClick={props.handleClose}
             >
               close
             </Button>
           </Grid>
-        </Grid>
       </Grid>
     </div>
   );

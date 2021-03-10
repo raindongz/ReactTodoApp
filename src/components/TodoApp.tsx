@@ -192,6 +192,8 @@ export default function TodoApp() {
   //reset whole Application
   function resetApp(){
     setTodoLists([]);
+    setShowForChange(false);
+    setShowForAdd(false);
   }
   //return statement starts here
   return (
