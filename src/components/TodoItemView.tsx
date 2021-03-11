@@ -54,16 +54,15 @@ const TodoItemView = (props: TodoItemViewInterface) => {
   // const [item, setItem] = useState<TodoItem>( props.item )
   const classes = useStyles();
   return (
+
     <Grid
       container
       spacing={1}
       className="todo-item"
-      direction="row"
-      justify="center"
-      alignItems="center"
     >
-      <Grid className="todo-item-input-wrapper">
-        <TextField id="standard-basic"
+      <Grid className="todo-item-input-wrapper"
+            item xs={6}>
+        <TextField className="standard-basic"
           style={{
             textDecoration: props.item.completed ? "line-through" : undefined,
           }}
@@ -73,12 +72,12 @@ const TodoItemView = (props: TodoItemViewInterface) => {
           }
         />
       </Grid>
-      <Grid>
+      <Grid item xs={5}>
         {props.item.completed ? (
           <Button
             variant="outlined"
             color="primary"
-            className={classes.margin}
+            className='complete-button'
             onClick={() =>
               props.handleTodoComplete(props.item.id, props.item.listId)
             }
@@ -89,7 +88,7 @@ const TodoItemView = (props: TodoItemViewInterface) => {
           <ColorButton
             variant="contained"
             color="primary"
-            className={classes.margin}
+            className='complete-button'
             onClick={() =>
                 props.handleTodoComplete(props.item.id, props.item.listId)
             }
@@ -98,7 +97,7 @@ const TodoItemView = (props: TodoItemViewInterface) => {
           </ColorButton>
         )}
       </Grid>
-      <Grid>
+      <Grid item xs={1}>
         <IconButton aria-label="delete" className="item-remove">
           <DeleteIcon
             fontSize="small"
@@ -110,6 +109,7 @@ const TodoItemView = (props: TodoItemViewInterface) => {
         </IconButton>
       </Grid>
     </Grid>
+
   );
 };
 

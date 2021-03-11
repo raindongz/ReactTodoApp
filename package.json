@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.1",
@@ -15,7 +16,9 @@
     "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-draggable": "^4.4.3",
     "react-scripts": "4.0.3",
+    "react-window": "^1.8.6",
     "typescript": "^4.2.3",
     "web-vitals": "^1.1.0"
   },
@@ -44,6 +47,10 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.168"
+    "@types/lodash": "^4.14.168",
+    "@types/react-window": "^1.8.2",
+    "@types/shortid": "^0.0.29",
+    "prettier": "^2.2.1",
+    "shortid": "^2.2.15"
   }
 }

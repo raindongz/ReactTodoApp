@@ -4,16 +4,20 @@ import {
   Box,
   Button,
   Grid,
+  GridList,
+  List,
+  ListItem,
   makeStyles,
   Tab,
   Tabs,
+  TextField,
   Theme,
   Typography,
 } from "@material-ui/core";
 import TodoListView from "./TodoListView";
 import { TodoItem, TodoList } from "../interfaces/model";
 import * as _ from "lodash";
-//to install shortid 1:npm install. 2:npm install type 3:npm i --save-dev shortid@2.2.15
+//to install shortid 1:npm install. 2:npm install -D @types/module-name  3:npm i --save-dev shortid@2.2.15
 import shortid from "shortid";
 import Todoform from "./Todoform";
 import { Close } from "@material-ui/icons";
@@ -21,16 +25,30 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import { ReactComponent } from "*.svg";
 import SaveIcon from "@material-ui/icons/Save";
-import PopupWindow from "../PopupWindow";
 import DeleteIcon from "@material-ui/icons/Delete";
 import AlarmIcon from "@material-ui/icons/Alarm";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Paper, { PaperProps } from "@material-ui/core/Paper";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
+import CachedIcon from "@material-ui/icons/Cached";
+//import snackbar
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+
+//snackbar function and style
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 //tab and panel declaration staff
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
   value: any;
 }
-
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 
@@ -68,10 +86,40 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 //Todo APP start here
 export default function TodoApp() {
-  //handle popup window for Add new List
-  const [showForAdd, setShowForAdd] = useState(false);
+  //popup window stuff
+  const [open, setOpen] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [inputState, setInputState] = React.useState("");
+  function handleListNameInput(event: React.ChangeEvent<HTMLInputElement>) {
+    setInputState(event.target.value);
+  }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  function handleDialogSwitchOrAdd() {
+    if (showForChange) {
+      changeListName(inputState);
+      if (inputRef && inputRef.current) {
+        inputRef.current.value = "";
+      }
+      setInputState("");
+    } else {
+      const newList = {
+        id: shortid.generate(),
+        name: inputState,
+        items: [],
+      };
+      addNewList(newList);
+      if (inputRef && inputRef.current) {
+        inputRef.current.value = "";
+      }
+      setInputState("");
+    }
+  }
   //handle popup window for list name change
   const [showForChange, setShowForChange] = useState(false);
+
   const classes = useStyles();
   //get item in local storage
   const localItems = JSON.parse(localStorage.getItem("lists") || "{}");
@@ -90,6 +138,39 @@ export default function TodoApp() {
 
   //Item CRUD starts here
   //complete item
+  //item snack bar
+  const [ItemSnackBarOpen, setItemSnackbarOpen] = React.useState(false);
+  const [NewItemSnackBar, setNewItemSnakeBar] = React.useState(false);
+  const ItemDeleteSnackBar = () => {
+    setNewItemSnakeBar(false);
+    setItemSnackbarOpen(true);
+  };
+  const ItemDeleteSnackBarClose = (
+    event?: React.SyntheticEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setItemSnackbarOpen(false);
+  };
+  //new item snack bar
+  const NewItemSnackBarOpen = () => {
+    setItemSnackbarOpen(false);
+    setNewItemSnakeBar(true);
+  };
+  const handleNewItemClose = (
+    event?: React.SyntheticEvent,
+    reason?: string
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setNewItemSnakeBar(false);
+  };
+
   function handleTodoComplete(itemId: string, listId: string) {
     const newLists = _.cloneDeep(todoLists);
     newLists
@@ -121,6 +202,7 @@ export default function TodoApp() {
       .items.filter((item) => item.id !== itemId);
     //newList.items= list.items.filter((item)=>item.id!==id);
     setTodoLists(newLists);
+    ItemDeleteSnackBar();
   }
   //create item
   function handleItemCreat(item: TodoItem, listId: string) {
@@ -130,6 +212,7 @@ export default function TodoApp() {
     }
     newLists.find((list) => list.id === listId)!.items.push(item);
     setTodoLists(newLists);
+    NewItemSnackBarOpen();
   }
 
   //List CRUD start here
@@ -145,6 +228,12 @@ export default function TodoApp() {
     setCurrentListId(listId);
   };
 
+  function setChangeListName() {
+    setShowForChange(true);
+    setOpen(true);
+    handleDialogSwitchOrAdd();
+  }
+
   function changeListName(listName: string) {
     if (listName.trim() === "") {
       return;
@@ -153,6 +242,7 @@ export default function TodoApp() {
     newLists.find((list) => list.id === currentListId)!.name = listName;
     setTodoLists(newLists);
     setShowForChange(false);
+    setOpen(false);
   }
 
   const deleteList = () => {
@@ -164,36 +254,30 @@ export default function TodoApp() {
     //copy.splice( -1, 1 )
     //setTodoLists( copy )
   };
-  //popup window stuff for add new list
-  function windowPopupForAddList() {
-    setShowForAdd(true);
-  }
-  //popup window for change listy name
-  function windowPopupForChangeList() {
-    setShowForChange(true);
-  }
+
   //add new list
   const addNewList = (todoList: TodoList) => {
     if (todoList.name.trim() === "") {
       return;
     }
     setTodoLists([...todoLists, todoList]);
-    setShowForAdd(false);
+    setOpen(false);
     //if only one list left then
     if (todoLists.length === 1) {
       setCurrentListId(todoLists[0].id);
     }
   };
+
   function handleClose() {
-    setShowForAdd(false);
+    setOpen(false);
     setShowForChange(false);
   }
 
   //reset whole Application
-  function resetApp(){
+  function resetApp() {
     setTodoLists([]);
     setShowForChange(false);
-    setShowForAdd(false);
+    setOpen(false);
   }
   //return statement starts here
   return (
@@ -201,23 +285,59 @@ export default function TodoApp() {
       <React.Fragment>
         <CssBaseline />
         <Container fixed>
-          {showForAdd ? (
-            <PopupWindow
-              windowForAdd={true}
-              handleClose={handleClose}
-              addNewList={addNewList}
-              changeListName={changeListName}
-            />
-          ) : null}
-          {showForChange ? (
-            <PopupWindow
-              windowForAdd={false}
-              handleClose={handleClose}
-              addNewList={addNewList}
-              changeListName={changeListName}
-            />
-          ) : null}
-          <Grid container direction="row" spacing={9} justify="center">
+          <Snackbar
+            open={NewItemSnackBar}
+            autoHideDuration={6000}
+            onClose={handleNewItemClose}
+          >
+            <Alert onClose={handleNewItemClose} severity="success">
+              Successfully created Item!
+            </Alert>
+          </Snackbar>
+          <Snackbar
+            open={ItemSnackBarOpen}
+            autoHideDuration={6000}
+            onClose={ItemDeleteSnackBarClose}
+          >
+            <Alert onClose={ItemDeleteSnackBarClose} severity="warning">
+              Delete item successful!
+            </Alert>
+          </Snackbar>
+          <div>
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Change List Name</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  ref={inputRef}
+                  margin="dense"
+                  id="name"
+                  label="Enter List Name"
+                  type="email"
+                  fullWidth
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    handleListNameInput(event)
+                  }
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleDialogSwitchOrAdd} color="primary">
+                  Submit
+                </Button>
+                <Button onClick={handleClose} color="primary">
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+          <Grid>
+            <h1 className="title">Todo App</h1>
+          </Grid>
+          <Grid container spacing={3}>
             <Grid item xs={10}>
               <AppBar position="static" color="default">
                 <Tabs
@@ -236,7 +356,7 @@ export default function TodoApp() {
                       onClick={() => handleSelect(todoList.id)}
                     />
                   ))}
-                  <Button variant="outlined" onClick={windowPopupForAddList}>
+                  <Button variant="outlined" onClick={handleClickOpen}>
                     {" "}
                     +{" "}
                   </Button>
@@ -260,19 +380,22 @@ export default function TodoApp() {
                 </TabPanel>
               ))}
             </Grid>
-            <Grid container direction="column" item xs={2} spacing={0}>
-              <Grid>
+            <Grid container item xs={2}>
+              <Grid item xs>
                 <Button
-                  onClick={windowPopupForChangeList}
+                  size="large"
+                  className="change-list-button"
+                  onClick={setChangeListName}
                   variant="contained"
                   color="primary"
-                  startIcon={<SaveIcon />}
+                  startIcon={<BorderColorIcon />}
                 >
                   Change Name
                 </Button>
               </Grid>
-              <Grid>
+              <Grid item xs>
                 <Button
+                  size="large"
                   variant="contained"
                   color="secondary"
                   className="delete-button"
@@ -282,12 +405,13 @@ export default function TodoApp() {
                   Delete List
                 </Button>
               </Grid>
-              <Grid>
+              <Grid item xs>
                 <Button
+                  size="large"
                   className="reset-button"
                   variant="outlined"
                   color="secondary"
-                  startIcon={<AlarmIcon />}
+                  startIcon={<CachedIcon />}
                   onClick={resetApp}
                 >
                   Reset App

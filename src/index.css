@@ -9,16 +9,7 @@ body {
     background-color: #9ad4f3;
     font-family: sans-serif;
 }
-.todo-form input,
-.item {
-    border: 1px solid #ececec;
-}
-.todo-item input {
-    width: 100%;
-    border: 0;
-    border-bottom: 1px solid transparent;
-    transition: .25s border-bottom ease-in-out;
-}
+
 .modal {
     background-color: #454444;
     color: #090a0a;
@@ -30,21 +21,19 @@ body {
     padding: 20px;
 }
 
-
+/*Todo app title style*/
+.title{
+    color: #9ad4f3;
+}
 /* Todo form styles */
-.todo-form input,
+.outlined-basic {
+    width: 100%;
+}
+.add-item-button{
 
-.todo-form input {
-    padding: 0 14px;
-    width: 30%;
-    height: 48px;
-    transition: .25s border ease-in-out;
+    height: 100%;
 }
 
-.todo-form input:focus {
-    outline: 0;
-    border: 1px solid #3498db;
-}
 /*popup window input*/
 .window-input input {
     padding: 0 14px;
@@ -56,6 +45,15 @@ body {
     border: 1px solid #0c0b0b;
 }
 /*todo item style*/
+.standard-basic{
+    width:300%;
+}
+.complete-button{
+    left: 235%;
+}
+.item-remove{
+    left: 1500%;
+}
 .todo-item-input-wrapper input {
     padding: 0 14px;
     width: 85%;
@@ -66,3 +64,14 @@ body {
     outline: 0;
     border: 1px solid #3498db;
 }
+/*Todo List*/
+.todo-list {
+    width: 100%;
+    maxWidth: 360;
+
+    maxHeight: 100,
+}
+
+/*Buttons*/
+/*Grid List Style*/
+

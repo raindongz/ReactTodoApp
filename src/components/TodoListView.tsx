@@ -1,10 +1,25 @@
 import { TodoItem, TodoList } from "../interfaces/model";
 import TodoItemView from "./TodoItemView";
-import { Button, Checkbox, Grid } from "@material-ui/core";
+import {Button, Checkbox, createStyles, Grid, GridList, List, makeStyles, Theme} from "@material-ui/core";
 import React, { useState } from "react";
 import _ from "lodash";
 import SaveIcon from "@material-ui/icons/Save";
-
+//grid list style
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-around',
+            overflow: 'hidden',
+            backgroundColor: theme.palette.background.paper,
+        },
+        gridList: {
+            width: 720,
+            height: 500,
+        },
+    }),
+);
 interface TodoListViewInterface {
   todoList: TodoList;
   listIndex: number;
@@ -19,25 +34,23 @@ interface TodoListViewInterface {
 }
 
 const TodoListView = (props: TodoListViewInterface) => {
+    const classes = useStyles();
   return (
-    <div>
-      <Grid
-      >
-        <Grid>
+    <div className='todo-list-view'>
+      <GridList className={classes.gridList}>
+          <Grid>
           {props.todoList.items.map((item, index) => (
-            <div>
-              <div>
-                <TodoItemView
-                  item={item}
-                  handleTodoComplete={props.handleTodoComplete}
-                  handleTodoUpdate={props.handleTodoUpdate}
-                  handleTodoRemove={props.handleTodoRemove}
-                />
-              </div>
-            </div>
+              <TodoItemView
+                item={item}
+                handleTodoComplete={props.handleTodoComplete}
+                handleTodoUpdate={props.handleTodoUpdate}
+                handleTodoRemove={props.handleTodoRemove}
+              />
           ))}
-        </Grid>
-      </Grid>
+
+          </Grid>
+      </GridList>
+
     </div>
   );
 };
