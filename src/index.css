@@ -71,7 +71,10 @@ body {
 
     maxHeight: 100,
 }
+.todo-list-view{
+    padding: 15px;
 
+}
 /*Buttons*/
 /*Grid List Style*/
 
