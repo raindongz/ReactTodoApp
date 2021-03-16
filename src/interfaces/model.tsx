@@ -3,10 +3,14 @@ export interface TodoItem {
     content: string,
     completed: boolean,
     listId:string,
+    userId:string,
+    createdDate:Date,
+    lastModifiedDate:Date,
 }
 
 export interface TodoList {
-    id: string,
-    name: string,
-    items: TodoItem[]
+    listId: string,
+    listName: string,
+    userId:string,
+    items: string[]
 }

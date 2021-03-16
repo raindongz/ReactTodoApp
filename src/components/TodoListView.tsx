@@ -1,9 +1,8 @@
 import { TodoItem, TodoList } from "../interfaces/model";
 import TodoItemView from "./TodoItemView";
-import {Button, Checkbox, createStyles, Grid, GridList, List, makeStyles, Theme} from "@material-ui/core";
+import { createStyles, Grid, GridList, List, makeStyles, Theme} from "@material-ui/core";
 import React, { useState } from "react";
-import _ from "lodash";
-import SaveIcon from "@material-ui/icons/Save";
+import Todoform from "./Todoform";
 //grid list style
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -22,29 +21,36 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 interface TodoListViewInterface {
   todoList: TodoList;
+  todoListItems: TodoItem[],
   listIndex: number;
   changeListName: (newName: string, listId: string) => void;
   handleTodoUpdate: (
     event: React.ChangeEvent<HTMLInputElement>,
-    itemId: string,
-    listId: string
+    item: TodoItem
   ) => void;
-  handleTodoRemove: (itemId: string, listId: string) => void;
-  handleTodoComplete: (itemId: string, listId: string) => void;
+  handleTodoRemove: (item: TodoItem) => void;
+  handleTodoComplete: (item: TodoItem) => void;
+  handleItemCreate: (item: TodoItem) => void;
+  handleMoveItemClick:(item:TodoItem)=>void;
 }
 
 const TodoListView = (props: TodoListViewInterface) => {
     const classes = useStyles();
   return (
     <div className='todo-list-view'>
+    <Todoform
+        todoList={props.todoList}
+        handleItemCreate={props.handleItemCreate}
+    />
       <GridList className={classes.gridList}>
           <Grid>
-          {props.todoList.items.map((item, index) => (
-              <TodoItemView
+          {props.todoListItems.map((item, index) => (
+              <TodoItemView key={item.id}
                 item={item}
                 handleTodoComplete={props.handleTodoComplete}
                 handleTodoUpdate={props.handleTodoUpdate}
                 handleTodoRemove={props.handleTodoRemove}
+                            handleMoveItemClick={props.handleMoveItemClick}
               />
           ))}
 

@@ -49,10 +49,13 @@ body {
     width:300%;
 }
 .complete-button{
-    left: 235%;
+    left: 200%;
 }
 .item-remove{
-    left: 1500%;
+    left: 1300%;
+}
+.move-item-button{
+    left:1400%;
 }
 .todo-item-input-wrapper input {
     padding: 0 14px;

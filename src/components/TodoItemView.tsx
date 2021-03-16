@@ -1,8 +1,8 @@
 import { TodoItem } from "../interfaces/model";
-import { useState } from "react";
+import React from "react";
+import PresentToAllIcon from '@material-ui/icons/PresentToAll';
 import {
   Button,
-  Checkbox,
   createMuiTheme,
   createStyles,
   Grid,
@@ -41,13 +41,13 @@ const theme = createMuiTheme({
 
 interface TodoItemViewInterface {
   item: TodoItem;
-  handleTodoComplete: (itemId: string, listId: string) => void;
   handleTodoUpdate: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    itemId: string,
-    listId: string
+      event: React.ChangeEvent<HTMLInputElement>,
+      item: TodoItem
   ) => void;
-  handleTodoRemove: (itemId: string, listId: string) => void;
+  handleTodoRemove: (item: TodoItem) => void;
+  handleTodoComplete: (item: TodoItem) => void;
+  handleMoveItemClick:(item:TodoItem)=>void;
 }
 
 const TodoItemView = (props: TodoItemViewInterface) => {
@@ -61,14 +61,14 @@ const TodoItemView = (props: TodoItemViewInterface) => {
       className="todo-item"
     >
       <Grid className="todo-item-input-wrapper"
-            item xs={6}>
+            item xs={5}>
         <TextField className="standard-basic"
           style={{
             textDecoration: props.item.completed ? "line-through" : undefined,
           }}
           value={props.item.content}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            props.handleTodoUpdate(event, props.item.id, props.item.listId)
+            props.handleTodoUpdate(event, props.item)
           }
         />
       </Grid>
@@ -79,7 +79,7 @@ const TodoItemView = (props: TodoItemViewInterface) => {
             color="primary"
             className='complete-button'
             onClick={() =>
-              props.handleTodoComplete(props.item.id, props.item.listId)
+              props.handleTodoComplete(props.item)
             }
           >
             Completed
@@ -90,7 +90,7 @@ const TodoItemView = (props: TodoItemViewInterface) => {
             color="primary"
             className='complete-button'
             onClick={() =>
-                props.handleTodoComplete(props.item.id, props.item.listId)
+                props.handleTodoComplete(props.item)
             }
           >
             Complete
@@ -103,8 +103,16 @@ const TodoItemView = (props: TodoItemViewInterface) => {
             fontSize="small"
             className="delete-icon"
             onClick={() =>
-              props.handleTodoRemove(props.item.id, props.item.listId)
+              props.handleTodoRemove(props.item)
             }
+          />
+        </IconButton>
+      </Grid>
+      <Grid item xs={1}>
+        <IconButton className='move-item-button'>
+          <PresentToAllIcon
+                            fontSize="small"
+                            onClick={()=>props.handleMoveItemClick(props.item)}
           />
         </IconButton>
       </Grid>

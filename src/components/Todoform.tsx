@@ -7,7 +7,6 @@ import {
   Theme,
 } from "@material-ui/core";
 import { TodoItem, TodoList } from "../interfaces/model";
-import shortid from "shortid";
 import TextField from "@material-ui/core/TextField";
 
 interface TodoformViewInterface {
@@ -38,13 +37,16 @@ const TodoFormView = (props: TodoformViewInterface) => {
   function handleInputEnter() {
     //create new item
     const newItem: TodoItem = {
-      id: shortid.generate(),
+      id: "",
       content: inputState,
       completed: false,
-      listId: props.todoList.id,
+      listId: props.todoList.listId,
+      userId:'RUNDONG',
+      createdDate: new Date(),
+      lastModifiedDate: new Date(),
     };
     //call the TodoApp to creat the item
-    props.handleItemCreate(newItem, props.todoList.id);
+    props.handleItemCreate(newItem, props.todoList.listId);
     // Reset the input field
     if (inputRef && inputRef.current) {
       inputRef.current.value = "";
