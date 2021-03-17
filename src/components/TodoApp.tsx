@@ -3,10 +3,13 @@ import {
   AppBar,
   Box,
   Button,
-  DialogContentText,
+  DialogContentText, FormControl,
   Grid,
+  GridList,
   makeStyles,
+  MenuItem,
   RadioGroup,
+  Select,
   Tab,
   Tabs,
   TextField,
@@ -37,6 +40,17 @@ import TodoItemView from "./TodoItemView";
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+//drag down menu style
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 //tab and panel declaration staff
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -115,6 +129,17 @@ export default function TodoApp() {
   const [moveItemWindowOpen, setMoveItemWindowOpen] = useState(false);
   //selected item user want to move
   const [currentMoveItem, setCurrentMoveItem] = useState<TodoItem>();
+
+  //set dragdown menu stuff
+  const [
+    currentDragDownMenuList,
+    setCurrentDragDownMenuList,
+  ] = useState<TodoList>();
+  function handleDragDownMenuChange(event: any) {
+    setCurrentDragDownMenuList(
+      todoLists.find((list) => list.listId === event.target.value)!
+    );
+  }
 
   //Popup Windows functions
   //open the popup window for list name change and add new list
@@ -278,11 +303,11 @@ export default function TodoApp() {
   function handleMoveItemWindowClose() {
     setMoveItemWindowOpen(false);
   }
-  function handleMoveItemToList(targetList: TodoList) {
+  function handleMoveItemToList() {
     AppService.moveItem(
       currentMoveItem!.listId,
       currentMoveItem!.id,
-      targetList.listId
+      currentDragDownMenuList!.listId
     )
       .then((response) => {
         if (response.data) {
@@ -438,6 +463,9 @@ export default function TodoApp() {
     setShowForChange(false);
     setOpen(false);
   }
+
+
+
   //return statement starts here
   return (
     <div className={classes.root}>
@@ -489,17 +517,29 @@ export default function TodoApp() {
                 choose the list you want move to
               </DialogTitle>
               <DialogContent dividers>
-                {todoLists.map((list) => (
-                  <Button
-                    onClick={() => {
-                      handleMoveItemToList(list);
-                    }}
-                  >
-                    {list.listName}
-                  </Button>
-                ))}
+                <FormControl>
+                <Select
+                  autoFocus
+                  variant="filled"
+                  MenuProps={MenuProps}
+                  onChange={handleDragDownMenuChange}
+                >
+                  {todoLists.map((list) =>
+                    list.listId !== currentList?.listId ? (
+                      <MenuItem value={list.listId}>{list.listName}</MenuItem>
+                    ) : null
+                  )}
+                </Select>
+                </FormControl>
               </DialogContent>
               <DialogActions>
+                <Button
+                  autoFocus
+                  onClick={handleMoveItemToList}
+                  color="primary"
+                >
+                  Submit
+                </Button>
                 <Button
                   autoFocus
                   onClick={handleMoveItemWindowClose}
